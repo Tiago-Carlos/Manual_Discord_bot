@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import axios from 'axios'
+import { BiHelpCircle } from 'react-icons/bi'
 
 function App() {
 
@@ -9,12 +10,19 @@ function App() {
   const [msg, setMsg] = useState('');
   const [username, setUsername] = useState('');
   const [files, setFiles] = useState<any>();
+  const [erroWebhookLink, setErroWebhookLink] = useState("");
   
-  async function enviar_mensagem() {
+  const enviar_mensagem = (event: { preventDefault: () => void; }) => {
+    event.preventDefault();
+    if (!link_webhook) return;
+    if (!msg) return;
+    
     const form = new FormData();
-    let cnt = 0;
-    for (var i = 0; i < files.length; i++) {
-      form.append(`file${i}`, files[i], files[i].name);
+
+    if (files) {
+      for (var i = 0; i < files.length; i++) {
+        form.append(`file${i}`, files[i], files[i].name);
+      }
     }
 
     form.append('payload_json', JSON.stringify({
@@ -22,60 +30,112 @@ function App() {
       "username": username,
       "avatar_url": link_avatar
     }))
-    let obj = await (await fetch(link_webhook)).json();
 
-    const httpClient = axios.create({ baseURL: `https://discord.com/api/webhooks`});
+    fetch(link_webhook).then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      else {
+        throw "Error: Invalid Link"
+      }
+    })
+    .then((obj) => {
+      const httpClient = axios.create({ baseURL: `https://discord.com/api/webhooks`});
 
-    httpClient.post(`/${obj.id}/${obj.token}`, form);
+      httpClient.post(`/${obj.id}/${obj.token}`, form);
+    })
+    .catch((msg) => {
+      setErroWebhookLink(msg)
+    })
   }
   
   return (
     <div className="App">
-        <label>{'Link do webhook: '}</label>
-        <input type="text"
-            onChange= {e => setLink_webhook(e.target.value)}
-            className="form-control"
-            id="webhook-link"
-            placeholder='Insira o link do webhook' />
-        <br/>
+      <form onSubmit={enviar_mensagem}>
+      <table>
+      <tbody>
+        <tr>
+          <td>
+            <label>{'Webhook link '}
+            <span className='hovertext' 
+              data-hover='To create a webhook, right click on the desired channel, select edit channel, integrations, see webhook and create a new one.'>
+              <BiHelpCircle/>
+            </span>
+            </label>
+          </td>
+          <td>
+            <input type="text" size={50} required={true}
+                onChange= {e => setLink_webhook(e.target.value)}
+                className="form-control"
+                id="webhook-link"/>
+            {erroWebhookLink && <div className="error"> {erroWebhookLink} </div>}
+            </td>
+        </tr> 
+        <tr>
+          <td>
+            <label>{'Avatar link '}
+              <span className='hovertext' data-hover='The easiest way is to upload your image to imgur, right click it and copy image link'><BiHelpCircle/></span>
+            </label>
+          </td>
+          <td>
+            <input type="text" size={50}
+                onChange= {e => setLink_avatar(e.target.value)}
+                className="form-control"
+                id="avatar_url" />
+          </td>
+        </tr>
 
-        <label>{'Link do avatar: '}</label>
-        <input type="text"
-            onChange= {e => setLink_avatar(e.target.value)}
-            className="form-control"
-            id="avatar_url"
-            placeholder='Insira o link do avatar' />
-        <br/>
+        <tr>
+          <td>
+            <label>{'Bot username'}</label>
+          </td>
+          <td>
+            <input type="text" size={50}
+                onChange= {e => setUsername(e.target.value)}
+                className="form-control"
+                id="username" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <br/>
+          </td>
+        </tr>
 
-        <label>{'Username: '}</label>
-        <input type="text"
-            onChange= {e => setUsername(e.target.value)}
-            className="form-control"
-            id="username"
-            placeholder='Insira um nome para o bot' />
-        <br/>
+        <tr>
+          <td colSpan={2}>
+            Message:
+          </td>
+        </tr>
 
-        <label>{'Mensagem: '}</label>
-        <input type="text"
-            onChange= {e => setMsg(e.target.value)}
-            className="form-control"
-            id="Mensagem"
-            placeholder='Digite a mensagem' />
-        <br/>
+        <tr>
+          <td colSpan={2}>
+            <textarea cols={64} rows={7} maxLength={2000} required
+                onChange= {e => setMsg(e.target.value)}
+                className="form-control"
+                id="Mensagem"/>
+          </td>
+        </tr>
 
-        <label>{'Arquivo: '}</label>
-        <input type="file" multiple
-            onChange= {e => setFiles(e.target.files)}
-            className="form-control"
-            id="Mensagem"
-            placeholder='Digite a mensagem' />
-        <br/>
+        <tr>
+          <td colSpan={2}>
+            <input type="file" multiple
+                onChange= {e => setFiles(e.target.files)}
+                className="form-control"
+                id="Mensagem" />
+          </td>
+        </tr>
 
-        <button onClick={enviar_mensagem}
-            className='btn btn-danger'>
-            <i className='pi pi-plus' /> Enviar mensagem
-        </button>
-
+        <tr>
+          <td colSpan={2}>
+            <button onClick={enviar_mensagem} className="button">
+                Send message
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      </form>
     </div>
   )
 }
