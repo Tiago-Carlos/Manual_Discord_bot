@@ -58,3 +58,7 @@ table {
 }
 
 textarea { font-size: 18px; }
+
+.error {
+  color: red;
+}

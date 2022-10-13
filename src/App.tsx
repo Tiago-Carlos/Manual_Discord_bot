@@ -10,12 +10,19 @@ function App() {
   const [msg, setMsg] = useState('');
   const [username, setUsername] = useState('');
   const [files, setFiles] = useState<any>();
+  const [erroWebhookLink, setErroWebhookLink] = useState("");
   
-  async function enviar_mensagem() {
+  const enviar_mensagem = (event: { preventDefault: () => void; }) => {
+    event.preventDefault();
+    if (!link_webhook) return;
+    if (!msg) return;
+    
     const form = new FormData();
-    let cnt = 0;
-    for (var i = 0; i < files.length; i++) {
-      form.append(`file${i}`, files[i], files[i].name);
+
+    if (files) {
+      for (var i = 0; i < files.length; i++) {
+        form.append(`file${i}`, files[i], files[i].name);
+      }
     }
 
     form.append('payload_json', JSON.stringify({
@@ -23,15 +30,28 @@ function App() {
       "username": username,
       "avatar_url": link_avatar
     }))
-    let obj = await (await fetch(link_webhook)).json();
 
-    const httpClient = axios.create({ baseURL: `https://discord.com/api/webhooks`});
+    fetch(link_webhook).then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      else {
+        throw "Error: Invalid Link"
+      }
+    })
+    .then((obj) => {
+      const httpClient = axios.create({ baseURL: `https://discord.com/api/webhooks`});
 
-    httpClient.post(`/${obj.id}/${obj.token}`, form);
+      httpClient.post(`/${obj.id}/${obj.token}`, form);
+    })
+    .catch((msg) => {
+      setErroWebhookLink(msg)
+    })
   }
   
   return (
     <div className="App">
+      <form onSubmit={enviar_mensagem}>
       <table>
       <tbody>
         <tr>
@@ -44,10 +64,11 @@ function App() {
             </label>
           </td>
           <td>
-            <input type="text" size={50}
+            <input type="text" size={50} required={true}
                 onChange= {e => setLink_webhook(e.target.value)}
                 className="form-control"
-                id="webhook-link" />
+                id="webhook-link"/>
+            {erroWebhookLink && <div className="error"> {erroWebhookLink} </div>}
             </td>
         </tr> 
         <tr>
@@ -88,14 +109,11 @@ function App() {
         </tr>
 
         <tr>
-          {/* <td>
-            <label>{'Message'}</label>
-          </td> */}
           <td colSpan={2}>
-            <textarea cols={64} rows={7} maxLength={2000}
+            <textarea cols={64} rows={7} maxLength={2000} required
                 onChange= {e => setMsg(e.target.value)}
                 className="form-control"
-                id="Mensagem" />
+                id="Mensagem"/>
           </td>
         </tr>
 
@@ -117,6 +135,7 @@ function App() {
         </tr>
         </tbody>
       </table>
+      </form>
     </div>
   )
 }
