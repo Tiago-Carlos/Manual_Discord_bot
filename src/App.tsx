@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import axios from 'axios'
+import { BiHelpCircle } from 'react-icons/bi'
 
 function App() {
 
@@ -35,7 +36,12 @@ function App() {
       <tbody>
         <tr>
           <td>
-            <label>{'Webhook link'}</label>
+            <label>{'Webhook link '}
+            <span className='hovertext' 
+              data-hover='To create a webhook, right click on the desired channel, select edit channel, integrations, see webhook and create a new one.'>
+              <BiHelpCircle/>
+            </span>
+            </label>
           </td>
           <td>
             <input type="text"
@@ -46,7 +52,9 @@ function App() {
         </tr> 
         <tr>
           <td>
-            <label>{'Avatar link'}</label>
+            <label>{'Avatar link '}
+              <span className='hovertext' data-hover='The easiest way is to upload your image to imgur, right click it and copy image link'><BiHelpCircle/></span>
+            </label>
           </td>
           <td>
             <input type="text"
@@ -79,7 +87,7 @@ function App() {
                 id="Mensagem" />
           </td>
         </tr>
-        
+
         <tr>
           <td colSpan={2}>
             <input type="file" multiple
@@ -91,9 +99,8 @@ function App() {
 
         <tr>
           <td colSpan={2}>
-            <button onClick={enviar_mensagem}
-                className='btn btn-danger'>
-                <i className='pi pi-plus' /> Enviar mensagem
+            <button onClick={enviar_mensagem} className="button">
+                Send message
             </button>
           </td>
         </tr>
