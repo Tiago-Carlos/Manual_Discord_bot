@@ -20,6 +20,8 @@ function App() {
     if (!msg && !files) {return;}
     else if (!msg) {setMsg(" ")}
     
+    setErroWebhookLink("")
+    
     const form = new FormData();
 
     if (files) {
