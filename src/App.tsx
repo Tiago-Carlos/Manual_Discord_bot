@@ -14,8 +14,11 @@ function App() {
   
   const enviar_mensagem = (event: { preventDefault: () => void; }) => {
     event.preventDefault();
-    if (!link_webhook) return;
-    if (!msg) return;
+    if (!link_webhook.startsWith("https://discord.com/api/webhooks/")) {
+      return setErroWebhookLink("Error: Invalid Link")
+    }
+    if (!msg && !files) {return;}
+    else if (!msg) {setMsg(" ")}
     
     const form = new FormData();
 
