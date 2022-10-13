@@ -44,7 +44,7 @@ function App() {
             </label>
           </td>
           <td>
-            <input type="text"
+            <input type="text" size={50}
                 onChange= {e => setLink_webhook(e.target.value)}
                 className="form-control"
                 id="webhook-link" />
@@ -57,7 +57,7 @@ function App() {
             </label>
           </td>
           <td>
-            <input type="text"
+            <input type="text" size={50}
                 onChange= {e => setLink_avatar(e.target.value)}
                 className="form-control"
                 id="avatar_url" />
@@ -69,19 +69,30 @@ function App() {
             <label>{'Bot username'}</label>
           </td>
           <td>
-            <input type="text"
+            <input type="text" size={50}
                 onChange= {e => setUsername(e.target.value)}
                 className="form-control"
                 id="username" />
           </td>
         </tr>
-
         <tr>
           <td>
-            <label>{'Message'}</label>
+            <br/>
           </td>
-          <td>
-            <textarea
+        </tr>
+
+        <tr>
+          <td colSpan={2}>
+            Message:
+          </td>
+        </tr>
+
+        <tr>
+          {/* <td>
+            <label>{'Message'}</label>
+          </td> */}
+          <td colSpan={2}>
+            <textarea cols={64} rows={7} maxLength={2000}
                 onChange= {e => setMsg(e.target.value)}
                 className="form-control"
                 id="Mensagem" />

@@ -56,3 +56,5 @@ table {
   opacity: 1;
   visibility: visible;
 }
+
+textarea { font-size: 18px; }
