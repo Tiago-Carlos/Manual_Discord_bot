@@ -30,30 +30,56 @@ function App() {
   
   return (
     <div className="App">
-        <label>{'Link do webhook: '}</label>
-        <input type="text"
-            onChange= {e => setLink_webhook(e.target.value)}
-            className="form-control"
-            id="webhook-link"
-            placeholder='Insira o link do webhook' />
-        <br/>
+      <table>
+      <tbody>
+        <tr>
+          <td>
+            <label>{'Webhook link'}</label>
+          </td>
+          <td>
+            <input type="text"
+                onChange= {e => setLink_webhook(e.target.value)}
+                className="form-control"
+                id="webhook-link" />
+            </td>
+        </tr> 
+        <tr>
+          <td>
+            <label>{'Avatar link'}</label>
+          </td>
+          <td>
+            <input type="text"
+                onChange= {e => setLink_avatar(e.target.value)}
+                className="form-control"
+                id="avatar_url" />
+          </td>
+        </tr>
 
-        <label>{'Link do avatar: '}</label>
-        <input type="text"
-            onChange= {e => setLink_avatar(e.target.value)}
-            className="form-control"
-            id="avatar_url"
-            placeholder='Insira o link do avatar' />
-        <br/>
+        <tr>
+          <td>
+            <label>{'Bot username'}</label>
+          </td>
+          <td>
+            <input type="text"
+                onChange= {e => setUsername(e.target.value)}
+                className="form-control"
+                id="username" />
+          </td>
+        </tr>
 
-        <label>{'Username: '}</label>
-        <input type="text"
-            onChange= {e => setUsername(e.target.value)}
-            className="form-control"
-            id="username"
-            placeholder='Insira um nome para o bot' />
-        <br/>
+        <tr>
+          <td>
+            <label>{'Message'}</label>
+          </td>
+          <td>
+            <textarea
+                onChange= {e => setMsg(e.target.value)}
+                className="form-control"
+                id="Mensagem" />
+          </td>
+        </tr>
 
+<<<<<<< Updated upstream
         <label>{'Mensagem: '}</label>
         <input type="text"
             onChange= {e => setMsg(e.target.value)}
@@ -66,6 +92,27 @@ function App() {
             className='btn btn-danger'>
             <i className='pi pi-plus' /> Enviar mensagem
         </button>
+=======
+        <tr>
+          <td colSpan={2}>
+            <input type="file" multiple
+                onChange= {e => setFiles(e.target.files)}
+                className="form-control"
+                id="Mensagem" />
+          </td>
+        </tr>
+
+        <tr>
+          <td colSpan={2}>
+            <button onClick={enviar_mensagem}
+                className='btn btn-danger'>
+                <i className='pi pi-plus' /> Enviar mensagem
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+>>>>>>> Stashed changes
     </div>
   )
 }
