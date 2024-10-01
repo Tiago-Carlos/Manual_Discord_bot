@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import './App.css'
 import axios from 'axios'
 import { BiHelpCircle } from 'react-icons/bi'
+import { getCredentials, sendMessage } from './services/webhook/WebhookService';
+import { credentials } from './types/credentials/credentials';
 
 function App() {
 
@@ -9,10 +11,10 @@ function App() {
   const [link_avatar, setLink_avatar] = useState('');
   const [msg, setMsg] = useState('');
   const [username, setUsername] = useState('');
-  const [files, setFiles] = useState<any>();
+  const [files, setFiles] = useState<File[]>();
   const [erroWebhookLink, setErroWebhookLink] = useState("");
   
-  const enviar_mensagem = (event: { preventDefault: () => void; }) => {
+  const enviar_mensagem = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
     if (!link_webhook.startsWith("https://discord.com/api/webhooks/")) {
       return setErroWebhookLink("Error: Invalid Link")
@@ -22,36 +24,14 @@ function App() {
     
     setErroWebhookLink("")
     
-    const form = new FormData();
+    const cred = await getCredentials<credentials>(link_webhook);
 
-    if (files) {
-      for (var i = 0; i < files.length; i++) {
-        form.append(`file${i}`, files[i], files[i].name);
-      }
-    }
+    const response = await sendMessage<any>(cred.data, {content: msg, username: username, avatar_url: link_avatar}, files);
+  }
 
-    form.append('payload_json', JSON.stringify({
-      "content": msg,
-      "username": username,
-      "avatar_url": link_avatar
-    }))
-
-    fetch(link_webhook).then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      else {
-        throw "Error: Invalid Link"
-      }
-    })
-    .then((obj) => {
-      const httpClient = axios.create({ baseURL: `https://discord.com/api/webhooks`});
-
-      httpClient.post(`/${obj.id}/${obj.token}`, form);
-    })
-    .catch((msg) => {
-      setErroWebhookLink(msg)
-    })
+  function handleFileInput(event: ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files) return;
+      setFiles(Array.from(event.target.files))
   }
   
   return (
@@ -125,7 +105,7 @@ function App() {
         <tr>
           <td colSpan={2}>
             <input type="file" multiple
-                onChange= {e => setFiles(e.target.files)}
+                onChange= {handleFileInput}
                 className="form-control"
                 id="Mensagem" />
           </td>
